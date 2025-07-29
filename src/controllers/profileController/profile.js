@@ -1,12 +1,10 @@
-// controllers/userController.js
+const User = require('../../models/user');
 
-const User = require('../../models/companyModel');
-
-const getUserProfile = async (req, res) => { 
+const getUserProfile = async (req, res) => {
     try {
-        const userId = req.user.id;
+        const userId = req.user?.id; // Set by auth middleware (JWT decoded)
 
-        const user = await User.findById(userId).select('-password'); // exclude password
+        const user = await User.findById(userId).select('-passwordHash');
 
         if (!user) {
             return res.status(404).json({ success: false, message: 'User not found' });
@@ -18,12 +16,11 @@ const getUserProfile = async (req, res) => {
                 id: user._id,
                 name: user.name,
                 email: user.email,
-                companyName: user.companyName,
-                phone: user.phone,
-                slug: user.slug,
                 role: user.role,
-                verified: user.verified,
+                apiCount: user.apiCount,
+                lastAccess: user.lastAccess,
                 createdAt: user.createdAt,
+                updatedAt: user.updatedAt,
             },
         });
     } catch (error) {

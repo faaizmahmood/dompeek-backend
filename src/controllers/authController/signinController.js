@@ -1,8 +1,8 @@
-const User = require('../../models/companyModel');
+const User = require('../../models/user');
 const { setUser } = require('../../utils/jwt');
 const bcrypt = require('bcrypt');
 
-const signinCompany = async (req, res) => {
+const signinUser = async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -16,9 +16,10 @@ const signinCompany = async (req, res) => {
             return res.status(404).json({ message: "No account found with this email." });
         }
 
-        const isMatch = await bcrypt.compare(password, user.password);
+        // Match entered password with hashed password
+        const isMatch = await bcrypt.compare(password, user.passwordHash);
         if (!isMatch) {
-            return res.status(401).json({ message: "Invalid password." });
+            return res.status(401).json({ message: "Invalid email or password." });
         }
 
         const tokenPayload = {
@@ -34,7 +35,6 @@ const signinCompany = async (req, res) => {
             message: "Login successful.",
             authToken: token,
             userId: user._id,
-            slug: user.slug
         });
 
     } catch (error) {
@@ -43,4 +43,4 @@ const signinCompany = async (req, res) => {
     }
 };
 
-module.exports = { signinCompany };
+module.exports = { signinUser };

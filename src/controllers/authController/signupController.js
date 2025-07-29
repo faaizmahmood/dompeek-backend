@@ -1,11 +1,10 @@
-const User = require('../../models/companyModel');
+const User = require('../../models//user');
 const { setUser } = require('../../utils/jwt');
-const slugify = require('slugify');
 
-const signupCompany = async (req, res) => {
-    const { companyName, fullName, email, password, phone } = req.body;
+const signupUser = async (req, res) => {
+    const { name, email, password } = req.body;
 
-    if (!companyName || !email || !password || !fullName || !phone) {
+    if (!name || !email || !password) {
         return res.status(400).json({ message: "All fields are required." });
     }
 
@@ -13,53 +12,35 @@ const signupCompany = async (req, res) => {
         const existingUser = await User.findOne({ email });
 
         if (existingUser) {
-            return res.status(400).json({ message: "Company already exists." });
+            return res.status(400).json({ message: "User already exists with this email." });
         }
 
-        // Generate initial slug
-        let baseSlug = slugify(companyName, { lower: true, strict: true });
-        let slug = baseSlug;
-        let suffix = 1;
-
-        // Check for slug uniqueness
-        while (await User.findOne({ slug })) {
-            slug = `${baseSlug}-${suffix}`;
-            suffix++;
-        }
-
-        const userPayload = {
-            companyName,
-            name: fullName,
+        const user = new User({
+            name,
             email,
-            password,
-            phone,
-            slug,
-            verified: false,
-        };
+            passwordHash: password, // hashed automatically in model pre-save
+        });
 
-        const user = new User(userPayload);
         await user.save();
 
         const tokenPayload = {
             id: user._id,
             email: user.email,
-            name: user.name,
-            role: user.role,
+            role: user.role
         };
 
         const token = setUser(tokenPayload);
 
         res.status(201).json({
-            message: "Company registered successfully.",
+            message: "User registered successfully.",
             authToken: token,
-            userId: user._id,
-            slug: user.slug
+            userId: user._id
         });
 
     } catch (error) {
-        console.error("Signup error:", error);
+        console.error("Signup Error:", error);
         res.status(500).json({ message: "Internal Server Error." });
     }
 };
 
-module.exports = { signupCompany };
+module.exports = { signupUser };

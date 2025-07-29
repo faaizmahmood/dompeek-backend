@@ -33,7 +33,7 @@ app.get('/', (req, res) => {
 
 
 // Mount user routes
-app.use('/api/company', userRouter);
+app.use('/api/user', userRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/domain', domainToolRouter)
 
