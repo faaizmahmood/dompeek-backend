@@ -8,6 +8,7 @@ const getToday = () => new Date().toISOString().slice(0, 10);
 const getClientIP = (req) => req.headers['x-forwarded-for']?.split(',')[0] || req.connection.remoteAddress;
 
 const rateLimiter = async (req, res, next) => {
+    
     const today = getToday();
 
     if (req.user && req.user.id) {

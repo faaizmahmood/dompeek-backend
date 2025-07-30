@@ -1,7 +1,7 @@
 const express = require('express')
 const { getWhois, getSSL, getDNS, getSuggestions, getBlacklist, getReverseIP } = require("../controllers/domainToolsController/domainTools");
 const rateLimiter = require('../middleware/rateLimiter')
-const userMiddleware = require('../middleware/userMiddleware')
+const userMiddleware = require('../middleware/userLimitMiddleware')
 
 const router = express.Router()
 

@@ -9,6 +9,7 @@ const morgan = require('morgan');
 const userRouter = require('./src/routes/profileRouter');
 const authRouter = require('./src/routes/authRouter');
 const domainToolRouter = require('./src/routes/domainToolsRoutes')
+const emailVerification = require('./src/routes/verifyEmailRouter')
 
 // Initialize app
 const app = express();
@@ -35,6 +36,7 @@ app.get('/', (req, res) => {
 // Mount user routes
 app.use('/api/user', userRouter);
 app.use('/api/auth', authRouter);
+app.use('/api/mail', emailVerification);
 app.use('/api/domain', domainToolRouter)
 
 

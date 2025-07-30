@@ -21,6 +21,7 @@ const getUserProfile = async (req, res) => {
                 lastAccess: user.lastAccess,
                 createdAt: user.createdAt,
                 updatedAt: user.updatedAt,
+                verified: user.verified
             },
         });
     } catch (error) {
