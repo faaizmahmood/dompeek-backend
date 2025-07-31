@@ -5,6 +5,7 @@ const { getDnsData } = require("../../services/dnsService");
 const { getAlternativeDomain } = require("../../services/availabilityService.js");
 const { getBlacklistData } = require("../../services/blacklistService.js");
 const { getReverseIPData } = require("../../services/reverseIPService.js");
+const { getIpGeolocationData } = require("../../services/ipGeolocation.js");
 
 const getWhois = async (req, res) => {
     try {
@@ -76,8 +77,23 @@ const getReverseIP = async (req, res) => {
         const data = await getReverseIPData(req.query.domain);
         res.json(data);
     } catch (e) {
-        console.error("IP Quality Score Error:", e.message);
-        res.status(500).json({ error: "Blacklist fetch failed" });
+        console.error("Reverse IP Error:", e.message);
+        res.status(500).json({ error: "Reverse IPfetch failed" });
+    }
+};
+
+const getIpGeolocation = async (req, res) => {
+    const domain = req.query.domain;
+    if (!domain) {
+        return res.status(400).json({ error: "Domain is required" });
+    }
+
+    try {
+        const data = await getIpGeolocationData(req.query.domain);
+        res.json(data);
+    } catch (e) {
+        console.error("IP Geolocation Error:", e.message);
+        res.status(500).json({ error: "IP Geolocation fetch failed" });
     }
 };
 
@@ -89,5 +105,6 @@ module.exports = {
     getDNS,
     getSuggestions,
     getBlacklist,
-    getReverseIP
+    getReverseIP,
+    getIpGeolocation
 };

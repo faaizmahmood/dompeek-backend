@@ -34,6 +34,16 @@ const userSchema = new mongoose.Schema({
         default: 'free'
     },
 
+    recentSearches: {
+        type: [
+            {
+                domain: String,
+                timestamp: Date
+            }
+        ],
+        default: []
+    },
+
     // Rate limiting per day
     apiCount: {
         type: Number,
