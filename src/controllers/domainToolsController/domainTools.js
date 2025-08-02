@@ -6,6 +6,7 @@ const { getAlternativeDomain } = require("../../services/availabilityService.js"
 const { getBlacklistData } = require("../../services/blacklistService.js");
 const { getReverseIPData } = require("../../services/reverseIPService.js");
 const { getIpGeolocationData } = require("../../services/ipGeolocation.js");
+const { getDomainMetrics } = require("../../services/seoService.js");
 
 const getWhois = async (req, res) => {
     try {
@@ -96,6 +97,26 @@ const getIpGeolocation = async (req, res) => {
         res.status(500).json({ error: "IP Geolocation fetch failed" });
     }
 };
+ 
+const getSeoMetrics = async (req, res) => {
+    const domain = req.query.domain;
+    if (!domain) {
+        return res.status(400).json({ error: "Domain is required" });
+    }
+
+    try {
+        const data = await getDomainMetrics(domain);
+
+        if (data.error) {
+            return res.status(500).json({ error: data.error });
+        }
+
+        res.json(data);
+    } catch (e) {
+        console.error("Moz Metrics Error:", e.message);
+        res.status(500).json({ error: "Moz Metrics fetch failed" });
+    }
+};
 
 
 
@@ -106,5 +127,6 @@ module.exports = {
     getSuggestions,
     getBlacklist,
     getReverseIP,
-    getIpGeolocation
+    getIpGeolocation,
+    getSeoMetrics
 };
