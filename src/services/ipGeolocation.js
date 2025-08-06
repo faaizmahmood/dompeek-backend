@@ -15,6 +15,8 @@ const getIpGeolocationData = async (domain) => {
 
         const response = await axios.get(url);
 
+        console.log("✅ IP Geolocation response received");
+
         return {
             ip: clientIp,
             geolocation: response.data,

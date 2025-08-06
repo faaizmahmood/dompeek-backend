@@ -15,6 +15,7 @@ const getDomainMetrics = async (domain) => {
             },
         });
 
+        console.log("✅ SEO response received");
         return {
             domain,
             metrics: response.data || {},

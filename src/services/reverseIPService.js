@@ -9,6 +9,8 @@ const getReverseIPData = async (domain) => {
 
     const result = response.data.response;
 
+    console.log("✅ Reverse IP response received");
+
     if (result && result.domains && result.domains.length > 0) {
       return {
         ip: result.ip,

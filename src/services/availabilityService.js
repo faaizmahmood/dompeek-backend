@@ -25,6 +25,9 @@ const checkAvailability = async (domain) => {
     try {
         const response = await axios.get(url);
         const status = response.data?.DomainInfo?.domainAvailability;
+
+        console.log("✅ Availability response received");
+
         return status === "AVAILABLE";
     } catch (error) {
         console.error(`WHOIS API error for ${domain}:`, error.response?.data || error.message);
@@ -41,15 +44,14 @@ const getAlternativeDomain = async (domainName) => {
 
     let attempts = 0;
     for (const domain of variations) {
-        if (attempts >= 10) break; // limit to 10 API calls
+        if (attempts >= 15 || available.length >= 5) break; // limit to 10 API calls
 
         const isAvailable = await checkAvailability(domain);
         attempts++;
 
         if (isAvailable) {
             available.push(domain);
-            // You can `break` here if you only want the *first* available
-            // break;
+            if (available.length >= 3) break;
         }
     }
 

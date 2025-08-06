@@ -6,6 +6,9 @@ dotenv.config();
 const getDnsData = async (domain) => {
     const url = `https://api.hackertarget.com/dnslookup/?q=${domain}`;
     const response = await axios.get(url);
+
+    console.log("✅ DNS response received");
+
     return parseDnsRecords(response.data);
 };
 

@@ -10,6 +10,7 @@ const userRouter = require('./src/routes/profileRouter');
 const authRouter = require('./src/routes/authRouter');
 const domainToolRouter = require('./src/routes/domainToolsRoutes')
 const emailVerification = require('./src/routes/verifyEmailRouter')
+const overviewRouter = require('./src/routes/overviewRouter')
 
 // Initialize app
 const app = express();
@@ -38,6 +39,7 @@ app.use('/api/user', userRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/mail', emailVerification);
 app.use('/api/domain', domainToolRouter)
+app.use('/api/domain', overviewRouter)
 
 
 // Global 404 handler
