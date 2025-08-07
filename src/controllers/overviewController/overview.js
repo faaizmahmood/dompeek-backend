@@ -1,5 +1,5 @@
 const NodeCache = require("node-cache");
-const domainCache = new NodeCache({ stdTTL: 300 });
+const domainCache = new NodeCache({ stdTTL: 600 });
 
 const { getWhoisData } = require("../../services/whoisService.js");
 const { getSslData } = require("../../services/sslService.js");
@@ -9,6 +9,7 @@ const { getBlacklistData } = require("../../services/blacklistService.js");
 const { getReverseIPData } = require("../../services/reverseIPService.js");
 const { getIpGeolocationData } = require("../../services/ipGeolocation.js");
 const { getDomainMetrics } = require("../../services/seoService.js");
+const scrapeTLDUsage = require("../../services/scrapeTLDUsageService.js");
 
 const domainOverview = async (req, res) => {
     const domain = req.query.domain?.toLowerCase();
@@ -48,6 +49,7 @@ const domainOverview = async (req, res) => {
         { key: "reverseIP", fn: () => getReverseIPData(domain) },
         { key: "ipGeolocation", fn: () => getIpGeolocationData(domain) },
         { key: "seoMetrics", fn: () => getDomainMetrics(domain) },
+        { key: "tldUsage", fn: () => scrapeTLDUsage() },
     ];
 
     // ✅ Run all tasks in parallel and handle success/failure
