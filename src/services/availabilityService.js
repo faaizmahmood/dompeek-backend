@@ -1,6 +1,11 @@
 const axios = require("axios");
 const dotenv = require("dotenv");
+const NodeCache = require("node-cache");
+
 dotenv.config();
+
+// Setup cache (cache results for 5 minutes)
+const availabilityCache = new NodeCache({ stdTTL: 300 });
 
 // 1. Generate name + extension combinations
 const generateDomainSuggestions = (base) => {
@@ -18,24 +23,36 @@ const generateDomainSuggestions = (base) => {
     return suggestions;
 };
 
-// 2. WHOISXML API Call for availability
+// 2. WHOISXML API Call with caching for availability
 const checkAvailability = async (domain) => {
+    // Check cache first
+    const cachedResult = availabilityCache.get(domain);
+    if (cachedResult !== undefined) {
+        console.log("⚡ Using cached availability for", domain);
+        return cachedResult;
+    }
+
+    // If not cached, call API
     const url = `https://domain-availability.whoisxmlapi.com/api/v1?apiKey=${process.env.WHOIS_API_KEY}&domainName=${domain}&outputFormat=JSON`;
 
     try {
         const response = await axios.get(url);
         const status = response.data?.DomainInfo?.domainAvailability;
+        const isAvailable = status === "AVAILABLE";
 
-        console.log("✅ Availability response received");
+        console.log("✅ Availability response received for", domain);
 
-        return status === "AVAILABLE";
+        // Cache the result
+        availabilityCache.set(domain, isAvailable);
+
+        return isAvailable;
     } catch (error) {
-        console.error(`WHOIS API error for ${domain}:`, error.response?.data || error.message);
+        console.error(`❌ WHOIS API error for ${domain}:`, error.response?.data || error.message);
         return false; // treat as unavailable
     }
 };
 
-// 3. Main function - LIMITS TO 10 API CALLS MAX
+// 3. Main function - LIMITS TO 15 API CALLS MAX
 const getAlternativeDomain = async (domainName) => {
     const base = domainName.split(".")[0]; // remove extension
     const variations = generateDomainSuggestions(base);
@@ -44,7 +61,7 @@ const getAlternativeDomain = async (domainName) => {
 
     let attempts = 0;
     for (const domain of variations) {
-        if (attempts >= 15 || available.length >= 5) break; // limit to 10 API calls
+        if (attempts >= 15 || available.length >= 5) break;
 
         const isAvailable = await checkAvailability(domain);
         attempts++;
@@ -58,4 +75,4 @@ const getAlternativeDomain = async (domainName) => {
     return available;
 };
 
-module.exports = { getAlternativeDomain };
+module.exports = { getAlternativeDomain, checkAvailability };

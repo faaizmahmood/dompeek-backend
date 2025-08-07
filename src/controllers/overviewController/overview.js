@@ -4,7 +4,7 @@ const domainCache = new NodeCache({ stdTTL: 300 });
 const { getWhoisData } = require("../../services/whoisService.js");
 const { getSslData } = require("../../services/sslService.js");
 const { getDnsData } = require("../../services/dnsService");
-const { getAlternativeDomain } = require("../../services/availabilityService.js");
+const { checkAvailability } = require("../../services/availabilityService.js");
 const { getBlacklistData } = require("../../services/blacklistService.js");
 const { getReverseIPData } = require("../../services/reverseIPService.js");
 const { getIpGeolocationData } = require("../../services/ipGeolocation.js");
@@ -15,6 +15,18 @@ const domainOverview = async (req, res) => {
 
     if (!domain) {
         return res.status(400).json({ error: 'Domain is required' });
+    }
+
+    // ✅ 1. Check if domain is available before doing anything else
+    const isAvailable = await checkAvailability(domain);
+
+    if (isAvailable) {
+        return res.json({
+            domain,
+            fetchedAt: new Date(),
+            available: true,
+            message: "Domain is available; no further data to show."
+        });
     }
 
     const cachedData = domainCache.get(domain);
