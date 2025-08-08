@@ -5,7 +5,7 @@ const getSuggestions = require('../controllers/overviewController/getAlternative
 const accessControlMiddleware = require('../middleware/accessControlMiddleware');
 
 const router = express.Router();
-router.get("/overview", accessControlMiddleware, domainOverview);
+router.get("/overview", accessControlMiddleware, domainOverview); 
 router.get("/get-suggestions", getSuggestions);
 
 module.exports = router;

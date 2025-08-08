@@ -11,6 +11,7 @@ const authRouter = require('./src/routes/authRouter');
 const domainToolRouter = require('./src/routes/domainToolsRoutes')
 const emailVerification = require('./src/routes/verifyEmailRouter')
 const overviewRouter = require('./src/routes/overviewRouter')
+const aiRouter = require('./src/routes/aiRouter')
 
 // Initialize app
 const app = express();
@@ -21,9 +22,9 @@ dotenv.config();
 
 // Middleware
 app.use(express.json());
-app.use(cors());   
+app.use(cors());
 app.use(morgan('dev'));
-app.use(helmet()); 
+app.use(helmet());
 
 // Health check route
 app.get('/', (req, res) => {
@@ -40,6 +41,7 @@ app.use('/api/auth', authRouter);
 app.use('/api/mail', emailVerification);
 app.use('/api/domain', domainToolRouter)
 app.use('/api/domain', overviewRouter)
+app.use('/api/domain', aiRouter)
 
 
 // Global 404 handler
