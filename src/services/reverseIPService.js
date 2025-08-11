@@ -1,7 +1,7 @@
 const axios = require('axios');
 const dotenv = require('dotenv');
 dotenv.config();
-
+ 
 const getReverseIPData = async (domain) => {
   try {
     // Step 1: Call ViewDNS reverse IP API directly with domain (no IP lookup needed)

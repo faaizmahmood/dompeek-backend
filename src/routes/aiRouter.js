@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 
-const { getAISummaryController } = require('../controllers/aiInsightsController/aiSummary')
+const { getAIInsights } = require('../controllers/aiInsightsController/aiInsights')
 
-router.post('/ai-summary', getAISummaryController)
+router.post('/ai-summary', getAIInsights)
 
 module.exports = router

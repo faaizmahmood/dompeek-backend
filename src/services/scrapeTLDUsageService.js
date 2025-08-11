@@ -27,7 +27,7 @@ const scrapeTLDUsage = async () => {
     const results = [];
 
     $("#tld-counts tbody tr").each((i, row) => {
-      if (i >= 100) return false; // Stop after 100 entries
+      if (i >= 5) return false; // Stop after 100 entries 
 
       const tld = $(row).find("td.name").text().trim();
       const countText = $(row).find("td.amount").text().trim().replace(/,/g, "");

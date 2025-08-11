@@ -4,7 +4,7 @@ const callOpenAI = require('../utils/openAiCall');
 // ⏳ Cache for 6 hours (adjust as needed)
 const aiCache = new NodeCache({ stdTTL: 600, checkperiod: 120 });
 
-const getDomainAISummary = async (domainData) => {
+const getDomainAIRecommendations = async (domainData) => {
     try {
         const domainName = domainData?.whois?.domainName || null;
         if (!domainName) throw new Error('Missing domain name in data');
@@ -12,7 +12,7 @@ const getDomainAISummary = async (domainData) => {
         // 1️⃣ Check cache first
         const cached = aiCache.get(domainName);
         if (cached) {
-            console.log(`📦 AI summary cache hit for ${domainName}`);
+            console.log(`📦 AI Recommendations cache hit for ${domainName}`);
             return cached;
         }
 
@@ -33,65 +33,51 @@ const getDomainAISummary = async (domainData) => {
                 global_rank: Number(domainData?.seoMetrics?.metrics?.data?.global_rank) || null,
                 organic_keywords: Number(domainData?.seoMetrics?.metrics?.data?.organic_keywords) || 0
             },
-            security: {
+            Safety_Reputation: {
                 phishing: !!domainData?.blacklist?.phishing,
                 malware: !!domainData?.blacklist?.malware,
                 spamming: !!domainData?.blacklist?.spamming,
+                adult_content_flag: !!domainData?.blacklist?.adult,
                 suspicious: !!domainData?.blacklist?.suspicious,
-                risky_tld: !!domainData?.blacklist?.risky_tld
+                suspicious: !!domainData?.ssl?.certificates ? true : false,
+                dns_health: !!domainData?.blacklist?.dns_valid,
+                reverse_ip_domains: domainData?.reverseIP?.domains?.slice(0, 10) || []
             },
             market_signals: {
                 paid_competition: Number(domainData?.seoMetrics?.metrics?.data?.paid_competition) || 0,
                 cpc: Number(domainData?.seoMetrics?.metrics?.data?.cpc) || 0,
                 on_page_difficulty: Number(domainData?.seoMetrics?.metrics?.data?.on_page_difficulty) || 0,
                 off_page_difficulty: Number(domainData?.seoMetrics?.metrics?.data?.off_page_difficulty) || 0
-            }
+            },
+
         };
 
         // 3️⃣ AI Prompt
 
-        const prompt = `
-You are an expert domain market analyst and AI-driven branding strategist.
-You will receive structured domain analysis data in JSON format.
+const prompt = `
+You are an expert domain investment advisor with deep knowledge in domain valuation, SEO strategy, and online brand potential.  
+You will receive structured domain data with SEO metrics, safety indicators, and market signals.
 
-Your task:
-1. Produce a **short 3–4 sentence investment-grade summary** of the domain highlighting:
-   - Brandability
-   - SEO potential
-   - Risks & opportunities
-2. Predict a **fair market price in USD** (today’s open market, not counting corporate trademark/ownership value).
-3. Suggest **primary and secondary use cases** for the domain.
-4. Identify the most likely **ideal buyer categories** (e.g., "E-commerce startup in South Asia", "Digital marketing agency").
-5. Suggest **geographic or linguistic target markets** if applicable (based on name or TLD).
-6. Identify the **most relevant industries or market segments** this domain could serve.
-7. Flag **strengths** (value drivers) and **warnings** (risks).
-8. Keep valuations realistic — most domains are $50–$500k; only extreme cases can approach $1M.
+Your job:  
+Generate a **short, actionable, investment-oriented recommendation plan** advising a potential buyer whether to invest in this domain and what strategic actions to take if purchased.
 
-Output:
-Respond ONLY with valid JSON in this exact schema - please this ponit is important also no markdown, exact schema :
+Guidelines:
+- First assess whether this domain is worth buying based on the given metrics.
+- Provide 3–5 concise action steps focused on maximizing ROI if purchased.
+- Highlight opportunities (e.g., SEO growth, branding potential, resale value).
+- If there are major risks, clearly state them and suggest mitigation steps.
+- Avoid generic advice; be specific to the provided data.
+- Keep it professional, clear, and results-driven.
+
+Respond ONLY with valid JSON in this format (no markdown, no extra text):
 
 {
-  "summary": string,  // 3–4 sentence plain text summary
-  "predicted_price_usd": number,
-  "suggested_use_cases": [string],
-  "ideal_buyers": [
-    {
-      "buyer_type": string,
-      "match_percent": number, // 0–100
-      "reason": string
-    }
-  ],
-  "geo_targets": [string], // Countries, regions, or language markets
-  "industries": [
-    {
-      "industry_name": string,
-      "demand_score": number // 0–100
-    }
-  ],
-  "flags": {
-    "warnings": [string],
-    "strengths": [string]
-  }
+  "investment_recommendation": "Buy / Caution / Avoid",
+  "recommendations": [
+    "Action step 1",
+    "Action step 2",
+    "Action step 3"
+  ]
 }
 
 domainData: ${JSON.stringify(analysisData)}
@@ -111,12 +97,12 @@ domainData: ${JSON.stringify(analysisData)}
 
         // 6️⃣ Store in cache
         aiCache.set(domainName, parsed);
-        console.log(`💾 Cached AI summary for ${domainName}`);
+        console.log(`💾 Cached Buyer AI Recommendations for ${domainName}`);
 
         return parsed;
 
     } catch (err) {
-        console.error('Error in getDomainAISummary:', err);
+        console.error('Error in AIRecommendations:', err);
         return { error: err.message };
     }
 };
@@ -130,4 +116,4 @@ function getDomainAgeYears(createdDate, expiresDate) {
     return Number(diffYears.toFixed(1));
 }
 
-module.exports = { getDomainAISummary };
+module.exports = { getDomainAIRecommendations };
