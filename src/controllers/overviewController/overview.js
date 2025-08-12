@@ -42,14 +42,14 @@ const domainOverview = async (req, res) => {
 
     const tasks = [
         { key: "whois", fn: () => getWhoisData(domain) },
+        { key: "seoMetrics", fn: () => getDomainMetrics(domain) },
         { key: "ssl", fn: () => getSslData(domain) },
         { key: "dns", fn: () => getDnsData(domain) },
         // { key: "suggestions", fn: () => getAlternativeDomain(domain) },
         { key: "blacklist", fn: () => getBlacklistData(domain) },
         { key: "reverseIP", fn: () => getReverseIPData(domain) },
         { key: "ipGeolocation", fn: () => getIpGeolocationData(domain) },
-        { key: "seoMetrics", fn: () => getDomainMetrics(domain) },
-        { key: "tldUsage", fn: () => scrapeTLDUsage() },
+        // { key: "tldUsage", fn: () => scrapeTLDUsage() },
     ];
 
     // ✅ Run all tasks in parallel and handle success/failure

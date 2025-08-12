@@ -62,11 +62,13 @@ Your job:
 Generate a **short, actionable, investment-oriented recommendation plan** advising a potential buyer whether to invest in this domain and what strategic actions to take if purchased.
 
 Guidelines:
-- First assess whether this domain is worth buying based on the given metrics.
+- Always return a recommendation, even if the data is incomplete or limited.
+- If certain data is missing, make reasonable assumptions based on common industry patterns, but clearly state them in the advice.
+- First assess whether this domain is worth buying based on the given metrics (or inferred potential).
 - Provide 3–5 concise action steps focused on maximizing ROI if purchased.
 - Highlight opportunities (e.g., SEO growth, branding potential, resale value).
 - If there are major risks, clearly state them and suggest mitigation steps.
-- Avoid generic advice; be specific to the provided data.
+- Avoid generic advice; tailor it to the available data and inferred potential.
 - Keep it professional, clear, and results-driven.
 
 Respond ONLY with valid JSON in this format (no markdown, no extra text):
