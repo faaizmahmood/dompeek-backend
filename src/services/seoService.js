@@ -6,9 +6,9 @@ const RAPIDAPI_KEY = process.env.RAPIDAPI_SEO_KEY; // Set this in .env
 
 const getDomainMetrics = async (domain) => {
     try {
-        const url = `https://domain-seo-analysis.p.rapidapi.com/domain_seo_analysis/?domain=${domain}`;
+        const url = `https://domain-seo-analysis.p.rapidapi.com/domain_seo_analysis/?domain=${domain}&method=lite&groups=domain_authority,traffic,keywords,seo_difficulty`;
 
-        const response = await axios.get(url, { 
+        const response = await axios.get(url, {
             headers: {
                 'x-rapidapi-host': 'domain-seo-analysis.p.rapidapi.com',
                 'x-rapidapi-key': RAPIDAPI_KEY,

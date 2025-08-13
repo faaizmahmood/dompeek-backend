@@ -50,7 +50,7 @@ const domainOverview = async (req, res) => {
         { key: "reverseIP", fn: () => getReverseIPData(domain) },
         { key: "ipGeolocation", fn: () => getIpGeolocationData(domain) },
         // { key: "tldUsage", fn: () => scrapeTLDUsage() },
-    ];
+    ]; 
 
     // ✅ Run all tasks in parallel and handle success/failure
     const promises = tasks.map(async ({ key, fn }) => {
