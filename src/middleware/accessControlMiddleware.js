@@ -3,8 +3,8 @@ const IPModel = require('../models/ipLimit');
 const UserModel = require('../models/user');
 const { verifyUser } = require('../utils/jwt');
 
-const MAX_LIMIT_IP = 3;
-const MAX_LIMIT_USER = 1000;
+const MAX_LIMIT_IP = 10;
+const MAX_LIMIT_USER = 10;
 
 const getToday = () => new Date().toISOString().slice(0, 10);
 const getClientIP = (req) => req.headers['x-forwarded-for']?.split(',')[0] || req.connection.remoteAddress;
